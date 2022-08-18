@@ -1,1 +1,26 @@
-<p>data-table works!</p>
+<div class="container">
+    <table class="table table-striped table-responsive">
+        <thead>
+            <tr>
+                <th>Team</th>
+                <th>Player</th>
+                <th>toi</th>
+                <th>gp</th>
+                <th>xg60</th>
+                <th>c60</th>
+                <th>sogc_pct</th>
+            </tr>
+        </thead>
+        <tbody *ngFor="let team of individualData">
+            <tr *ngFor="let player of team.players; let index = index">
+                <td>{{ team.team }}</td>
+                <td>{{ player.player }}</td>
+                <td>{{ getPlayersToi(player.stats) }}</td>
+                <td>{{ getPlayersGp(player.stats) }}</td>
+                <td>{{ getPlayersXg60(player.stats) }}</td>
+                <td>{{ getPlayersC60(player.stats) }}</td>
+                <td>{{ getPlayersSogc_pct(player.stats) }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

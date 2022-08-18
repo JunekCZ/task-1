@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface iIndividualStatistic {
+/*export interface iIndividualStatistic {
   metricFilter: [{
     metric: string,
     value: number
@@ -21,6 +21,22 @@ export interface iIndividualStatistic {
     event: string,
     length: number
   }]
+}*/
+
+export interface iStat {
+  toi: number,
+  gp: number,
+  xg60: number,
+  c60: number,
+  sogc_pct: number
+}
+
+export interface iIndividualStatistic {
+  team: string,
+  players: [{
+    player: string,
+    stats: iStat
+  }]
 }
 
 @Injectable({
@@ -30,13 +46,25 @@ export class IndividualDataService {
 
   constructor(private http: HttpClient) {
   }
-  getIndividualData(): Observable<iIndividualStatistic[]> {
-    let url: string = "http://logiq.statistics.datasport.cz/api/v1/individual/f7166ebc-82f8-4279-a0ff-6b56d65f8e13";
+  getIndividualData(token: string, competition: string): Observable<iIndividualStatistic[]> {
+    let url: string = "http://logiq.statistics.datasport.cz/api/v1/individual/" + competition;
+    var body = 
+    {
+      "gameState": "5:5",
+      "timeOnIce": 600,
+      "metrics": [
+        "xg60",
+        "c60",
+        "sogc_pct"
+      ]
+    };
+    
+    console.log(JSON.stringify(body));
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer 8bda9a4f6490c8602322ad3d36305ce2103cb34b'
+      'Authorization': 'Bearer ' + token
     });
     let options = { headers };
-    return this.http.post<iIndividualStatistic[]>(url, null, options);
+    return this.http.post<iIndividualStatistic[]>(url, JSON.stringify(body), options);
   }
 }
