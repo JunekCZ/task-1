@@ -2,27 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-/*export interface iIndividualStatistic {
-  metricFilter: [{
-    metric: string,
-    value: number
-  }],
-  gameState: string,
-  scoreState: string,
-  place: string,
-  opponentTeams: string,
-  dateFrom: Date,
-  dateTo: Date,
-  timeFrom: number,
-  timeTo: number,
-  lastPlayedMatches: number,
-  timeOnIce: number,
-  afterEvent: [{
-    event: string,
-    length: number
-  }]
-}*/
-
 export interface iStat {
   toi: number,
   gp: number,
@@ -37,6 +16,36 @@ export interface iIndividualStatistic {
     player: string,
     stats: iStat
   }]
+}
+
+export interface iPlayer {
+  team: string,
+  player: string,
+  toi: number,
+  gp: number,
+  xg60: number,
+  c60: number,
+  sogc_pct: number
+}
+
+export class Player implements iPlayer {
+  team: string;
+  player: string;
+  toi: number;
+  gp: number;
+  xg60: number;
+  c60: number;
+  sogc_pct: number;
+
+  constructor(team: string, player: string, toi: number, gp: number, xg60: number, c60: number, sogc_pct: number) {
+    this.team = team;
+    this.player = player;
+    this.toi = toi;
+    this.gp = gp;
+    this.xg60 = xg60;
+    this.c60 = c60;
+    this.sogc_pct = sogc_pct;
+  }
 }
 
 @Injectable({
