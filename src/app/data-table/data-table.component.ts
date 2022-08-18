@@ -35,6 +35,9 @@ export class DataTableComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  /**
+   * Loads the data on the users interactions with checkboxes
+   */
   loadData(): void {
     this.showErrorMessage = false;
     if(this.checkboxes.every(i => !i.isSelected)) {
@@ -44,17 +47,24 @@ export class DataTableComponent implements OnInit {
     this.showTable = true;
     this.individualData = [];
     this.cols = ["Team", "Player", "toi", "gp"];
-    if(this.checkboxes[0].isSelected) this.cols.push("xg60")
-    if(this.checkboxes[1].isSelected) this.cols.push("c60")
-    if(this.checkboxes[2].isSelected) this.cols.push("sogc_pct")
+
+    if(this.checkboxes[0].isSelected) this.cols.push("xg60");
+    if(this.checkboxes[1].isSelected) this.cols.push("c60");
+    if(this.checkboxes[2].isSelected) this.cols.push("sogc_pct");
+  
     this.individualDataService.getIndividualData(
       this.token, this.competition, this.checkboxes[0].isSelected, this.checkboxes[1].isSelected, this.checkboxes[2].isSelected
     ).subscribe(data => {
       this.individualData = this.transformData(data);
-      console.log(this.individualData);
     });
   }
 
+  /**
+   * Transforms data from type iIndividualStatistic into type iPlayer
+   * Helps me to show all objects easily in the HTML
+   * @param data: iIndividualStatistics
+   * @returns array of iPlayer
+   */
   transformData(data: iIndividualStatistic[]): iPlayer[] {
     let dataPlayers: iPlayer[] = [];
     for (let i = 0; i < data.length; i++) {
@@ -67,10 +77,21 @@ export class DataTableComponent implements OnInit {
     return dataPlayers;
   }
 
+  /**
+   * Computing time to minutes
+   * @param time 
+   * @returns computed time in minutes
+   */
   calculateMinutes(time: number): string {
     return (time / 60).toFixed(0);
   }
 
+
+  /**
+   * Computing time to seconds
+   * @param time 
+   * @returns computed time in seconds
+   */
   calculateSeconds(time: number): string {
     let seconds: number = ((time / 60) % 1) * 60;
     return seconds > 9 ? seconds.toFixed(0) : "0" + seconds.toFixed(0);
