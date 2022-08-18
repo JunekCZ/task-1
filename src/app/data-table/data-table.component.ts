@@ -9,6 +9,13 @@ import { IndividualDataService, iIndividualStatistic, iStat, iPlayer, Player } f
   styleUrls: ['./data-table.component.scss']
 })
 export class DataTableComponent implements OnInit {
+  token: string = "";
+  competition: string = "";
+  private individualDataService: IndividualDataService;
+
+  showTable: boolean = false;
+  showErrorMessage: boolean = false;
+
   individualData: Player[] = [];
   checkboxes = [
     { id: 1, value: "xg60", isSelected: false },
@@ -16,22 +23,36 @@ export class DataTableComponent implements OnInit {
     { id: 3, value: "sogc_pct", isSelected: false }
   ];
 
-  cols: string[] = ["Team", "Player", "toi", "gp", "xg60", "c60", "sogc_pct"];
+  cols: string[] = ["Team", "Player", "toi", "gp"];
   colName: string = "";
 
-  constructor(private individualDataService: IndividualDataService) {
-    let token: string = "8bda9a4f6490c8602322ad3d36305ce2103cb34b";
-    let competition: string = "f7166ebc-82f8-4279-a0ff-6b56d65f8e13";
-    individualDataService.getIndividualData(token, competition).subscribe(data => {
-      this.individualData = this.transformData(data);
-      console.log(this.individualData);
-    });
+  constructor(private _individualDataService: IndividualDataService) {
+    this.individualDataService = _individualDataService;
+    this.token = "8bda9a4f6490c8602322ad3d36305ce2103cb34b";
+    this.competition = "f7166ebc-82f8-4279-a0ff-6b56d65f8e13";
   }
 
   ngOnInit(): void {
   }
 
   loadData(): void {
+    this.showErrorMessage = false;
+    if(this.checkboxes.every(i => !i.isSelected)) {
+      this.showErrorMessage = true;
+      return;
+    }
+    this.showTable = true;
+    this.individualData = [];
+    this.cols = ["Team", "Player", "toi", "gp"];
+    if(this.checkboxes[0].isSelected) this.cols.push("xg60")
+    if(this.checkboxes[1].isSelected) this.cols.push("c60")
+    if(this.checkboxes[2].isSelected) this.cols.push("sogc_pct")
+    this.individualDataService.getIndividualData(
+      this.token, this.competition, this.checkboxes[0].isSelected, this.checkboxes[1].isSelected, this.checkboxes[2].isSelected
+    ).subscribe(data => {
+      this.individualData = this.transformData(data);
+      console.log(this.individualData);
+    });
   }
 
   transformData(data: iIndividualStatistic[]): iPlayer[] {
@@ -46,4 +67,12 @@ export class DataTableComponent implements OnInit {
     return dataPlayers;
   }
 
+  calculateMinutes(time: number): string {
+    return (time / 60).toFixed(0);
+  }
+
+  calculateSeconds(time: number): string {
+    let seconds: number = ((time / 60) % 1) * 60;
+    return seconds > 9 ? seconds.toFixed(0) : "0" + seconds.toFixed(0);
+  }
 }
